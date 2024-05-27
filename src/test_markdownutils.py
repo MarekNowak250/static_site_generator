@@ -1,6 +1,9 @@
 import unittest
 
-from markdownutils import extract_markdown_images, extract_markdown_links, markdown_to_blocks
+from markdownutils import (extract_markdown_images, extract_markdown_links)
+
+from parentnode import ParentNode
+from leafnode import LeafNode
 
 class TextMarkdownUtils(unittest.TestCase):
     def test_extract_markdown_images(self):
@@ -20,20 +23,3 @@ class TextMarkdownUtils(unittest.TestCase):
             ],
             matches,
         )
-
-    def test_markdown_to_blocks(self):
-        result = markdown_to_blocks(
-        f'''
-
-        This is **bolded** paragraph
-
-            This is another paragraph with *italic* text and `code` here
-        This is the same paragraph on a new line
-
-        * This is a list
-        * with items''')
-        self.assertEqual(result, [
-            ['This is **bolded** paragraph'], 
-            ['This is another paragraph with *italic* text and `code` here', 'This is the same paragraph on a new line'], 
-            ['* This is a list', '* with items']
-            ])

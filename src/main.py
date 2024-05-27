@@ -1,27 +1,25 @@
-from textnode import TextNode
-from textnodeutils import TextNodeUtils
-from markdownutils import extract_markdown_images, extract_markdown_links, markdown_to_blocks
+from blockutils import extract_title, markdown_to_html_node
+from filesystemutils import copy_dir_content, read_file, save_file, get_all_files_paths
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    markdowns_paths = get_all_files_paths(dir_path_content, "md")
+    for path in markdowns_paths:
+        subPath = path.replace(dir_path_content, "").replace("md", "html")
+        print(dest_dir_path + subPath)
+        generate_page(path, template_path, dest_dir_path + subPath)
+    
+def generate_page(from_path, template_path, dest_path):
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    source_markdown = read_file(from_path)
+    template = read_file(template_path)
+    content = markdown_to_html_node(source_markdown).to_html()
+    title = extract_title(source_markdown)
+    output = template.replace("{{ Title }}", title).replace("{{ Content }}", content)
+    save_file(dest_path, output, create_dir=True)
 
 def main():
-    node = TextNode(
-    "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
-    "text",
-    )
-
-    print(markdown_to_blocks(
-f'''
-
-This is **bolded** paragraph
-
-  This is another paragraph with *italic* text and `code` here
-This is the same paragraph on a new line
-
-* This is a list
-* with items'''))
-    #print(TextNodeUtils().split_nodes_image([node]))
-
-    #print(TextNodeUtils().text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"))
-    # print(extract_markdown_links("This is text with an [image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and [another](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png)"))
+    copy_dir_content("./static", "./public")
+    generate_pages_recursive("./content", "template.html", "./public")
 
 if __name__ == "__main__":
     main()

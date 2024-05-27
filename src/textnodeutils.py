@@ -22,7 +22,7 @@ class TextNodeUtils:
     }
      
     def text_node_to_html_node(self, text_node):
-        if text_node.text in self.dict:
+        if text_node.text_type in self.dict:
             return self.dict[text_node.text_type](text_node)
         raise Exception(f"Unsupported text node type {text_node.text_type}")
     
